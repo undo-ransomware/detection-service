@@ -1,5 +1,9 @@
 from flask import Flask
+from routes.status import status_api
+
 app = Flask(__name__)
+
+app.register_blueprint(status_api, url_prefix='/status')
 
 @app.route('/')
 def hello_docker():
