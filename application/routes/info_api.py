@@ -1,7 +1,7 @@
 import json
 from flask import Blueprint
 from flask import Response
-from models.info import Info
+from application.models.info import Info
 
 info_api = Blueprint('info_api', __name__)
 
