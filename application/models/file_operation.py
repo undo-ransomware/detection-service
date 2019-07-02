@@ -1,7 +1,6 @@
 from application import db
-from serializer import Serializer
 
-class FileOperation(db.Model, Serializer):
+class FileOperation(db.Model):
     """Data model for file operations."""
 
     __tablename__ = 'file_operation'
@@ -20,7 +19,4 @@ class FileOperation(db.Model, Serializer):
     command = db.Column(db.Integer, index=False, unique=False, nullable=False)
     entropy = db.Column(db.Float, index=False, unique=False, nullable=False)
     standardDeviation = db.Column(db.Float, index=False, unique=False, nullable=False)
-
-    def serialize(self):
-        return Serializer.serialize(self)
         
