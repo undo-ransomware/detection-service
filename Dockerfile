@@ -1,5 +1,7 @@
 FROM python:3.6
-RUN pip install Flask
-WORKDIR /app
-COPY app /app
-CMD ["python", "app.py"]
+
+WORKDIR /detection-service
+COPY . .
+
+RUN pip install -r requirements.txt
+CMD ["python", "wsgi.py"]
