@@ -11,8 +11,8 @@ def create_app():
     db.init_app(app)
 
     with app.app_context():
-        from routes.info_api import info_api
-        from routes.file_operation_api import file_operation_api
+        from application.routes.info_api import info_api
+        from application.routes.file_operation_api import file_operation_api
 
         app.register_blueprint(info_api, url_prefix='/info')
         app.register_blueprint(file_operation_api, url_prefix='/file-operation')
