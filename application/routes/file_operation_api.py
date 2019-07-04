@@ -17,8 +17,9 @@ def findAll():
 
 @file_operation_api.route("/<int:id>")
 def find(id):
-    file_operation = FileOperation(AnalysisStatus.PENDING.value, 1, '/', 'test.txt', '', 'txt', 'txt', 300, 1561662751, Command.WRITE.value, 7.9, 0.0004)
-    return Response(json.dumps(file_operation.__dict__), status=200, mimetype='application/json')
+    schema = FileOperationSchema()
+    file_operation = FileOperation.query.get(id)
+    return Response(schema.dumps(file_operation), status=200, mimetype='application/json')
 
 @file_operation_api.route("", methods=['POST'])
 def create():
@@ -31,9 +32,25 @@ def create():
 
 @file_operation_api.route("/<int:id>", methods=['PUT'])
 def update(id):
-    file_operation = FileOperation(AnalysisStatus.PENDING.value, 1, '/', 'test.txt', '', 'txt', 'txt', 300, 1561662751, Command.WRITE.value, 7.9, 0.0004)
-    return Response(json.dumps(file_operation.__dict__), status=200, mimetype='application/json')
+    schema = FileOperationSchema()
+    request_json = request.get_json(force=True)
+    file_operation = FileOperation.query.get(id)
+    file_operation.status = int(request_json['status'])
+    file_operation.userId = int(request_json['userId'])
+    file_operation.path = request_json['path']
+    file_operation.originalName = request_json['originalName']
+    file_operation.newName = request_json['newName']
+    file_operation.size = int(request_json['size'])
+    file_operation.timestamp = int(request_json['timestamp'])
+    file_operation.command = int(request_json['command'])
+    file_operation.entropy = float(request_json['entropy'])
+    file_operation.standardDeviation = float(request_json['standardDeviation'])
+    db.session.commit()
+    return Response(schema.dumps(file_operation), status=200, mimetype='application/json')
 
 @file_operation_api.route("/<int:id>", methods=['DELETE'])
 def delete(id):
+    file_operation = FileOperation.query.get(id)
+    db.session.delete(file_operation)
+    db.session.commit()
     return Response('', status=200, mimetype='application/json')
