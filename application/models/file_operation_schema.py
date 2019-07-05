@@ -6,10 +6,12 @@ class FileOperationSchema(Schema):
     date_modified = fields.DateTime(dump_only=True)
 
     status = fields.Int()
-    userId = fields.Int()
+    userId = fields.Str()
     path = fields.Str()
     originalName = fields.Str()
     newName = fields.Str()
+    type = fields.Str()
+    mimeType = fields.Str()
     size = fields.Int()
     timestamp = fields.Int()
     command = fields.Int()
