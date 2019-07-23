@@ -13,9 +13,11 @@ def create_app():
     with app.app_context():
         from application.routes.info_api import info_api
         from application.routes.file_operation_api import file_operation_api
+        from application.routes.detection_api import detection_api
 
         app.register_blueprint(info_api, url_prefix='/info')
         app.register_blueprint(file_operation_api, url_prefix='/file-operation')
+        app.register_blueprint(detection_api, url_prefix='/detection')
 
         db.create_all()
 

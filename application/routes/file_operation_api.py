@@ -11,10 +11,15 @@ from application.models.command import Command
 file_operation_api = Blueprint('file_operation_api', __name__)
 
 @file_operation_api.route("")
-def findAll():
-    schema = FileOperationSchema(many=True)
-    file_operations = FileOperation.query.all()
+def findAll(userId = None):
+    schema = FileOperationSchema(exclude=['detectionId'], many=True)
+    userId = request.args.get('userId', default = None)
+    if userId is not None:
+        file_operations = FileOperation.query.all()
+    else:
+        file_operations = FileOperation.query.filter_by(userId = userId)
     return Response(schema.dumps(file_operations), status=200, mimetype='application/json')
+
 
 @file_operation_api.route("/<int:id>")
 def find(id):
@@ -37,29 +42,6 @@ def create():
     except exc.IntegrityError as e:
         db.session().rollback()
         return Response(status=409, mimetype='application/json')
-
-@file_operation_api.route("/<int:id>", methods=['PUT'])
-def update(id):
-    schema = FileOperationSchema()
-    request_json = request.get_json(force=True)
-    file_operation = FileOperation.query.get(id)
-    if file_operation is None:
-        return Response(status=404, mimetype='application/json')
-    else:
-        file_operation.status = int(request_json['status'])
-        file_operation.userId = request_json['userId']
-        file_operation.path = request_json['path']
-        file_operation.originalName = request_json['originalName']
-        file_operation.newName = request_json['newName']
-        file_operation.type = request_json['type']
-        file_operation.mimeType = request_json['mimeType']
-        file_operation.size = int(request_json['size'])
-        file_operation.timestamp = int(request_json['timestamp'])
-        file_operation.command = int(request_json['command'])
-        file_operation.entropy = float(request_json['entropy'])
-        file_operation.standardDeviation = float(request_json['standardDeviation'])
-        db.session.commit()
-        return Response(schema.dumps(file_operation), status=200, mimetype='application/json')
 
 @file_operation_api.route("/<int:id>", methods=['DELETE'])
 def delete(id):

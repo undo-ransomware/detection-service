@@ -17,3 +17,4 @@ class FileOperationSchema(Schema):
     command = fields.Int()
     entropy = fields.Float()
     standardDeviation = fields.Float()
+    detectionId = fields.Int()

@@ -21,4 +21,5 @@ class FileOperation(db.Model):
     command = db.Column(db.Integer, index=False, unique=False, nullable=False)
     entropy = db.Column(db.Float, index=False, unique=False, nullable=False)
     standardDeviation = db.Column(db.Float, index=False, unique=False, nullable=False)
+    detectionId = db.Column(db.Integer, db.ForeignKey('detection.id'))
         
