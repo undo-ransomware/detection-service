@@ -5,21 +5,44 @@ class FileOperation(db.Model):
 
     __tablename__ = 'file_operation'
 
+    # unique ID assigned for that fileop
     id            = db.Column(db.Integer, primary_key=True)
+    # local stuff for maintenance
     date_created  = db.Column(db.DateTime,  default=db.func.current_timestamp())
     date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
                                            onupdate=db.func.current_timestamp())
-    status = db.Column(db.Integer, index=False, unique=False, nullable=False)
-    userId = db.Column(db.String(256), index=False, unique=False, nullable=False)
-    path = db.Column(db.String(256), index=False, unique=False, nullable=False)
-    originalName = db.Column(db.String(256), index=False, unique=False, nullable=False)
-    newName = db.Column(db.String(256), index=False, unique=False, nullable=True)
-    type = db.Column(db.String(256), index=False, unique=False, nullable=False)
-    mimeType = db.Column(db.String(256), index=False, unique=False, nullable=False)
-    size = db.Column(db.Integer, index=False, unique=False, nullable=False)
-    timestamp = db.Column(db.Integer, index=False, unique=False, nullable=False)
-    command = db.Column(db.Integer, index=False, unique=False, nullable=False)
-    entropy = db.Column(db.Float, index=False, unique=False, nullable=False)
-    standardDeviation = db.Column(db.Float, index=False, unique=False, nullable=False)
-    detectionId = db.Column(db.Integer, db.ForeignKey('detection.id'))
-        
+    status = db.Column(db.Integer, nullable=False)
+
+    # user ID; 64 is from oc_users.uid
+    userId = db.Column(db.String(64), index=True, nullable=False)
+    # unique tracking ID for that file (fileid from oc_filecache)
+    fileid = db.Column(db.BigInteger, nullable=False)
+    # full path of file (unrestricted except on ancient Windows)
+    path = db.Column(db.Text(), nullable=False)
+    # name of file after operation; 250 is from oc_filecacke.name
+    name = db.Column(db.String(250), nullable=False)
+    # name of file before operation, if the file was moved. null if the
+    # filename didn't change.
+    originalName = db.Column(db.String(250), nullable=True)
+    # type of file, ie. "file", "folder" (and, in NextCloud, nothing else)
+    type = db.Column(db.String(6), nullable=False)
+    # mimetype according to file extension; 255 is from oc_mimetypes.mimetype
+    mimeType = db.Column(db.String(255), nullable=False)
+    # file size in bytes
+    size = db.Column(db.Integer, nullable=False)
+    # timestamp of file operation, should be at least 1ms precision. NextCloud
+    # cannot restore version that precisely but several operations per second
+    # are expected, and a good enough ransomware indicator that it makes sense
+    # to track them precisely.
+    # 26 is 20 digits for 2^64 plus 6 decimals for microsoeconds
+    # FIXME semantically this should be DateTime, but there's no portable way
+    # to specify subsecond precision for that?!
+    timestamp = db.Column(db.Numeric(precision=26, scale=6, asdecimal=True),
+			nullable=False)
+    # operation performed on the file: "DELETE", "RENAME", "WRITE", "CREATE"
+    command = db.Column(db.String(6), nullable=False)
+
+    # file features. must be nullable so features being added can have missing
+    # values for old files.
+    entropy = db.Column(db.Float, nullable=True)
+    standardDeviation = db.Column(db.Float, nullable=True)
