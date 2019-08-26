@@ -12,4 +12,4 @@ class Detection(db.Model):
                                            onupdate=db.func.current_timestamp())
     
     userId = db.Column(db.String(256), index=False, unique=False, nullable=False)
-    fileOperations = db.relationship('FileOperation')
+    #fileOperations = db.relationship('FileOperation')

@@ -8,18 +8,18 @@ class FileOperation(db.Model):
     # unique ID assigned for that fileop
     id            = db.Column(db.Integer, primary_key=True)
     # local stuff for maintenance
-    date_created  = db.Column(db.DateTime,  default=db.func.current_timestamp())
-    date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
+    dateCreated  = db.Column(db.DateTime,  default=db.func.current_timestamp())
+    dateModified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
                                            onupdate=db.func.current_timestamp())
-    status = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.Integer, default='pending')
 
     # user ID; 64 is from oc_users.uid
     userId = db.Column(db.String(64), index=True, nullable=False)
     # unique tracking ID for that file (fileid from oc_filecache)
-    fileid = db.Column(db.BigInteger, nullable=False)
+    fileId = db.Column(db.BigInteger, nullable=False)
     # full path of file (unrestricted except on ancient Windows)
     path = db.Column(db.Text(), nullable=False)
-    # name of file after operation; 250 is from oc_filecacke.name
+    # name of file after operation; 250 is from oc_filecache.name
     name = db.Column(db.String(250), nullable=False)
     # name of file before operation, if the file was moved. null if the
     # filename didn't change.
