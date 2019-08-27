@@ -1,3 +1,4 @@
+import uuid
 from application import db
 
 class FileOperation(db.Model):
@@ -6,12 +7,15 @@ class FileOperation(db.Model):
     __tablename__ = 'file_operation'
 
     # unique ID assigned for that fileop
-    id            = db.Column(db.Integer, primary_key=True)
-    # local stuff for maintenance
-    dateCreated  = db.Column(db.DateTime,  default=db.func.current_timestamp())
+    # TODO BigInteger would be better, but SqlAlchemy doesn't want to treat that
+    # as a primary key
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    # FIXME this is redundant with timestamp, except for precision and time source
+    dateCreated = db.Column(db.DateTime,  default=db.func.current_timestamp())
+    # FIXME columns should be immutable once created
     dateModified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
                                            onupdate=db.func.current_timestamp())
-    status = db.Column(db.Integer, default='pending')
+    status = db.Column(db.String(9), default='pending')
 
     # user ID; 64 is from oc_users.uid
     userId = db.Column(db.String(64), index=True, nullable=False)

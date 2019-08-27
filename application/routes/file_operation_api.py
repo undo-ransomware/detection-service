@@ -22,7 +22,7 @@ def findAll(userId = None):
         file_operations = FileOperation.query.all()
     return Response(schema.dumps(file_operations), status=200, mimetype='application/json')
 
-@file_operation_api.route('/<int:id>')
+@file_operation_api.route('/<string:id>')
 def find(id):
     schema = FileOperationSchema()
     file_operation = FileOperation.query.get(id)
@@ -41,9 +41,9 @@ def create():
         return Response(schema.dumps(file_operation), status=200, mimetype='application/json')
     except exc.IntegrityError as e:
         db.session().rollback()
-        return Response(schema.dumps({ 'exception': repr(e) }), status=409, mimetype='application/json')
+        return Response(json.dumps({ 'exception': repr(e) }), status=409, mimetype='application/json')
 
-@file_operation_api.route('/<int:id>', methods=['DELETE'])
+@file_operation_api.route('/<string:id>', methods=['DELETE'])
 def delete(id):
     file_operation = FileOperation.query.get(id)
     if file_operation is not None:

@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, pprint
 
 class FileOperationSchema(Schema):
-    id            = fields.Int(dump_only=True)
+    id            = fields.Str(dump_only=True)
     dateCreated  = fields.DateTime(dump_only=True)
     dateModified = fields.DateTime(dump_only=True)
     status = fields.Str(dump_only=True)
